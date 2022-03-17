@@ -22,7 +22,7 @@ public class Java7Aggregator implements Aggregator {
     public List<Pair<String, Long>> getMostFrequentWords(List<String> words, long limit) {
         List<Pair<String, Long>> listOfPairs = new ArrayList<>();
         Pair<String, Long> pair;
-        for (int i = 0; i < words.size() - 1; i++) {
+        for (int i = 0; i < words.size(); i++) {
             String word = words.get(i);
             limit = 0;
             for (String item : words) {
