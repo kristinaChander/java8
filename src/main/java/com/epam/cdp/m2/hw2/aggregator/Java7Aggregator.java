@@ -24,13 +24,13 @@ public class Java7Aggregator implements Aggregator {
         Pair<String, Long> pair;
         for (int i = 0; i < words.size(); i++) {
             String word = words.get(i);
-            limit = 0;
+            Long wordsCount = 0L;
             for (String item : words) {
                 if (item.equalsIgnoreCase(word)) {
-                    limit++;
+                    wordsCount++;
                 }
             }
-            pair = new Pair(word, limit);
+            pair = new Pair(word, wordsCount);
             if (!listOfPairs.contains(pair)) {
                 listOfPairs.add(pair);
             }
@@ -38,22 +38,19 @@ public class Java7Aggregator implements Aggregator {
         Collections.sort(listOfPairs, new Comparator<Pair<String, Long>>() {
             @Override
             public int compare(Pair<String, Long> o1, Pair<String, Long> o2) {
-                if (o1.getValue() > o2.getValue()) {
-                    return -1;
-                } else if (o1.getValue().equals(o2.getValue())) {
-                    return 0;
-                } else {
-                    return 1;
+                long valueDifference =  (o2.getValue() - o1.getValue());
+                if (valueDifference != 0L) {
+                    return (int) valueDifference;
                 }
-            }
-        });
-        Collections.sort(listOfPairs, new Comparator<Pair<String, Long>>() {
-            @Override
-            public int compare(Pair<String, Long> o1, Pair<String, Long> o2) {
                 return o1.getKey().compareTo(o2.getKey());
             }
         });
-        return listOfPairs;
+        List<Pair<String, Long>> listOfPairs2 = new ArrayList<>();
+        for (int i = 0; i < Math.min(limit,listOfPairs.size()); i++) {
+            listOfPairs2.add(listOfPairs.get(i));
+        }
+
+        return listOfPairs2;
     }
 
     @Override
