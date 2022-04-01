@@ -38,7 +38,7 @@ public class Java7Aggregator implements Aggregator {
         Collections.sort(listOfPairs, new Comparator<Pair<String, Long>>() {
             @Override
             public int compare(Pair<String, Long> o1, Pair<String, Long> o2) {
-                long valueDifference =  (o2.getValue() - o1.getValue());
+                long valueDifference = (o2.getValue() - o1.getValue());
                 if (valueDifference != 0L) {
                     return (int) valueDifference;
                 }
@@ -46,7 +46,7 @@ public class Java7Aggregator implements Aggregator {
             }
         });
         List<Pair<String, Long>> listOfPairs2 = new ArrayList<>();
-        for (int i = 0; i < Math.min(limit,listOfPairs.size()); i++) {
+        for (int i = 0; i < Math.min(limit, listOfPairs.size()); i++) {
             listOfPairs2.add(listOfPairs.get(i));
         }
 
@@ -55,6 +55,42 @@ public class Java7Aggregator implements Aggregator {
 
     @Override
     public List<String> getDuplicates(List<String> words, long limit) {
-        throw new UnsupportedOperationException();
+        List<Pair<String, Long>> listOfPairs = new ArrayList<>();
+        Pair<String, Long> pair;
+        List<String> repeatedWords = new ArrayList<>();
+        for (int i = 0; i < words.size(); i++) {
+            String word = words.get(i);
+            Long wordsCount = 0L;
+            for (String item : words) {
+                if (item.equalsIgnoreCase(word)) {
+                    wordsCount++;
+                }
+                if (wordsCount >= 2) {
+                    pair = new Pair(word.toUpperCase(), wordsCount);
+                    if (!listOfPairs.contains(pair)) {
+                        listOfPairs.add(pair);
+                    }
+                }
+            }
+            repeatedWords = new ArrayList<>();
+            for (Pair<String, Long> entry : listOfPairs) {
+                repeatedWords.add(entry.getKey());
+            }
+        }
+        Collections.sort(repeatedWords, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                long valueDifference = (o1.length() - o2.length());
+                if (valueDifference != 0L) {
+                    return (int) valueDifference;
+                }
+                return o1.compareTo(o2);
+            }
+        });
+        List<String> listToConsole = new ArrayList<>();
+        for (int i = 0; i < Math.min(limit, repeatedWords.size()); i++) {
+            listToConsole.add(repeatedWords.get(i));
+        }
+        return listToConsole;
     }
 }

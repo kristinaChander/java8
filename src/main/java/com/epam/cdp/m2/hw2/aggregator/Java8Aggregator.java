@@ -31,6 +31,17 @@ public class Java8Aggregator implements Aggregator {
 
     @Override
     public List<String> getDuplicates(List<String> words, long limit) {
-        throw new UnsupportedOperationException();
+        return  words.stream()
+                .map(String::toUpperCase)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .stream()
+                .filter(s -> s.getValue() >= 2)
+                .map(Map.Entry::getKey).collect(Collectors.toList())
+                .stream()
+                .sorted(Comparator.comparing(s->s.toString().length())
+                        .thenComparing(Object::toString))
+                .limit(limit)
+                .collect(Collectors.toList());
     }
 }
