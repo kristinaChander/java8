@@ -2,10 +2,7 @@ package com.epam.cdp.m2.hw2.aggregator;
 
 import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Java7Aggregator implements Aggregator {
 
@@ -21,19 +18,17 @@ public class Java7Aggregator implements Aggregator {
     @Override
     public List<Pair<String, Long>> getMostFrequentWords(List<String> words, long limit) {
         List<Pair<String, Long>> listOfPairs = new ArrayList<>();
-        Pair<String, Long> pair;
+        Map<String, Long> mapForCounting = new HashMap<>();
         for (int i = 0; i < words.size(); i++) {
             String word = words.get(i);
-            Long wordsCount = 0L;
-            for (String item : words) {
-                if (item.equalsIgnoreCase(word)) {
-                    wordsCount++;
-                }
+            if (mapForCounting.containsKey(word)) {
+                mapForCounting.put(word, mapForCounting.get(word) + 1L);
+            } else {
+                mapForCounting.put(word, 1L);
             }
-            pair = new Pair(word, wordsCount);
-            if (!listOfPairs.contains(pair)) {
-                listOfPairs.add(pair);
-            }
+        }
+        for (Map.Entry<String, Long> entry : mapForCounting.entrySet()) {
+            listOfPairs.add(new Pair(entry.getKey(), entry.getValue()));
         }
         Collections.sort(listOfPairs, new Comparator<Pair<String, Long>>() {
             @Override
@@ -55,29 +50,22 @@ public class Java7Aggregator implements Aggregator {
 
     @Override
     public List<String> getDuplicates(List<String> words, long limit) {
-        List<Pair<String, Long>> listOfPairs = new ArrayList<>();
-        Pair<String, Long> pair;
-        List<String> repeatedWords = new ArrayList<>();
+        List<String> listOfRepeatedWords = new ArrayList<>();
+        Map<String, Long> mapForCounting = new HashMap<>();
         for (int i = 0; i < words.size(); i++) {
-            String word = words.get(i);
-            Long wordsCount = 0L;
-            for (String item : words) {
-                if (item.equalsIgnoreCase(word)) {
-                    wordsCount++;
-                }
-                if (wordsCount >= 2) {
-                    pair = new Pair(word.toUpperCase(), wordsCount);
-                    if (!listOfPairs.contains(pair)) {
-                        listOfPairs.add(pair);
-                    }
-                }
-            }
-            repeatedWords = new ArrayList<>();
-            for (Pair<String, Long> entry : listOfPairs) {
-                repeatedWords.add(entry.getKey());
+            String word = words.get(i).toUpperCase();
+            if (mapForCounting.containsKey(word)) {
+                mapForCounting.put(word, mapForCounting.get(word) + 1L);
+            } else {
+                mapForCounting.put(word, 1L);
             }
         }
-        Collections.sort(repeatedWords, new Comparator<String>() {
+        for (Map.Entry<String, Long> entry : mapForCounting.entrySet()) {
+            if(entry.getValue()>=2){
+                listOfRepeatedWords.add(entry.getKey());
+            }
+        }
+        Collections.sort(listOfRepeatedWords, new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
                 long valueDifference = (o1.length() - o2.length());
@@ -88,8 +76,8 @@ public class Java7Aggregator implements Aggregator {
             }
         });
         List<String> listToConsole = new ArrayList<>();
-        for (int i = 0; i < Math.min(limit, repeatedWords.size()); i++) {
-            listToConsole.add(repeatedWords.get(i));
+        for (int i = 0; i < Math.min(limit, listOfRepeatedWords.size()); i++) {
+            listToConsole.add(listOfRepeatedWords.get(i));
         }
         return listToConsole;
     }

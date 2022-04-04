@@ -31,6 +31,16 @@ public class Java8ParallelAggregator implements Aggregator {
 
     @Override
     public List<String> getDuplicates(List<String> words, long limit) {
-        throw new UnsupportedOperationException();
+        return  words.parallelStream()
+                .map(String::toUpperCase)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .parallelStream()
+                .filter(s -> s.getValue() >= 2)
+                .map(Map.Entry::getKey)
+                .sorted(Comparator.comparing(s->s.toString().length())
+                        .thenComparing(Object::toString))
+                .limit(limit)
+                .collect(Collectors.toList());
     }
 }
